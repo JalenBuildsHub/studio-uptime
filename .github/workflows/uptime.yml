@@ -1,0 +1,57 @@
+name: studio-uptime
+
+on:
+  schedule:
+    - cron: "13,43 * * * *"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  probe:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Probe flagship domains
+        run: |
+          set -u
+          failed=0
+          for url in \
+            https://www.swingersclubllc.com \
+            https://18holestohome.com \
+            https://jalenbuilds.com \
+            https://toptiermovingjunk.com \
+            https://1stchoicefire.com \
+            https://oregongreens.co \
+            https://golfflow.jalentrades.com \
+            https://www.jalentrades.com; do
+            code=$(curl -sL -o /dev/null -w '%{http_code}' --max-time 20 "$url" || echo 000)
+            if [ "$code" != "200" ]; then
+              sleep 10
+              code=$(curl -sL -o /dev/null -w '%{http_code}' --max-time 20 "$url" || echo 000)
+            fi
+            if [ "$code" != "200" ]; then
+              echo "::error::DOWN $url (HTTP $code after retry)"
+              failed=1
+            else
+              echo "OK  $url"
+            fi
+          done
+          exit $failed
+
+      - name: Monthly keepalive commit (prevents 60-day cron auto-disable)
+        if: ${{ always() }}
+        run: |
+          if [ "$(date -u +%d)" = "01" ] && [ "$(date -u +%H)" = "03" ] && [ "$(date -u +%M)" -lt 30 ]; then
+            git config user.name "studio-uptime-bot"
+            git config user.email "actions@github.com"
+            git clone --depth 1 "https://x-access-token:${GITHUB_TOKEN}@github.com/${GITHUB_REPOSITORY}.git" ka
+            cd ka
+            date -u > .keepalive
+            git add .keepalive
+            git commit -m "keepalive $(date -u +%Y-%m)" && git push || echo "keepalive skipped"
+          else
+            echo "not keepalive window"
+          fi
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
