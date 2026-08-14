@@ -18,3 +18,5 @@ intentionally excluded while the Apparatus umbrella retirement is in progress
 (its 404 is deliberate).
 
 Maintained by the studio agents; created 2026-07-05.
+
+MIT licensed. Built by [Nymrel](https://nymrel.com).
