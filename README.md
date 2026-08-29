@@ -10,10 +10,12 @@ can't report an outage they're part of.
   first failure of a scheduled workflow.
 - A once-a-month keepalive commit prevents GitHub's 60-day scheduled-workflow
   auto-disable on quiet repos.
+- The probe workflow has read-only repository access. Write access is isolated
+  to the separate monthly keepalive workflow.
 - Public repo on purpose: public repos get unlimited free Actions minutes and
-  the workflow contains only public URLs.
+  the workflows contain only public URLs.
 
-Domain list lives in `.github/workflows/uptime.yml`. `budhub.online` is
+The domain list lives in `.github/workflows/uptime.yml`. `budhub.online` is
 intentionally excluded while the Apparatus umbrella retirement is in progress
 (its 404 is deliberate).
 
