@@ -1,0 +1,26 @@
+[build-system]
+requires = ["hatchling>=1.25"]
+build-backend = "hatchling.build"
+
+[project]
+name = "nymrel-studiorecall"
+version = "0.1.0"
+description = "A release-continuity agent where Sibyl Memory is the critical path."
+readme = "README.md"
+requires-python = ">=3.10"
+license = { text = "MIT" }
+authors = [{ name = "Nymrel" }]
+dependencies = ["sibyl-memory-client>=0.4.14,<0.5"]
+
+[project.optional-dependencies]
+dev = ["pytest>=8.0"]
+
+[project.scripts]
+studiorecall = "studiorecall.cli:main"
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/studiorecall"]
+
+[tool.pytest.ini_options]
+addopts = "-q"
+testpaths = ["tests"]
